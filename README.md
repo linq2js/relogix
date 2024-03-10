@@ -44,9 +44,9 @@ const Root = () => (
 export default Root;
 ```
 
-### Step 3: Using Logic Hooks
+### Step 3: Defining Logic
 
-Now, you can create and use logic hooks within your components. For example, let's create a simple logic function:
+Now, you can define your logics. For example, let's create a simple logic function:
 
 ```js
 // logic/userLogic.js
@@ -119,12 +119,12 @@ export const Counter = () => {
 
 ### Compare to other state management libs
 
-| Feature/Aspect  | Redux                                                                                  | Constate                                                                                       | use-between                                                                              | Relogix                                                                                                               |
-| --------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| **Complexity**  | High, involves understanding actions, reducers, and middleware.                        | Low to Medium, simplifies context API usage for state management.                              | Very Low, straightforward state sharing between components.                              | Low, focuses on modularizing React hook logic for reuse.                                                              |
-| **Boilerplate** | High, requires a lot of setup including actions, reducers, and potentially middleware. | Low, reduces boilerplate by leveraging React context and hooks.                                | Very Low, minimal setup required for sharing state.                                      | Low, minimal boilerplate by focusing on logic reuse without extensive setup.                                          |
-| **Performance** | Good, especially with optimizations and careful state management.                      | Good, optimized by minimizing the number of re-renders.                                        | Good for small to medium projects, simple model reduces over-rendering.                  | Optimized for re-rendering with features like stable callbacks and potential for lazy loading logic.                  |
-| **Use Case**    | Best suited for complex, large-scale applications with global state management needs.  | Suitable for applications that prefer a more React-centric state management using Context API. | Ideal for simpler applications or components that need to share state straightforwardly. | Well-suited for React applications aiming to share and reuse hook logic across components, enhancing maintainability. |
+| Feature/Aspect  | Redux                                                                                  | Constate                                                                                       | use-between                                                                              | Relogix                                                                                                                 |
+| --------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **Complexity**  | High, involves understanding actions, reducers, and middleware.                        | Low to Medium, simplifies context API usage for state management.                              | Very Low, straightforward state sharing between components.                              | `Low, focuses on modularizing React hook logic for reuse.`                                                              |
+| **Boilerplate** | High, requires a lot of setup including actions, reducers, and potentially middleware. | Low, reduces boilerplate by leveraging React context and hooks.                                | Very Low, minimal setup required for sharing state.                                      | `Low, minimal boilerplate by focusing on logic reuse without extensive setup.`                                          |
+| **Performance** | Good, especially with optimizations and careful state management.                      | Good, optimized by minimizing the number of re-renders.                                        | Good for small to medium projects, simple model reduces over-rendering.                  | `Optimized for re-rendering with features like stable callbacks and potential for lazy loading logic.`                  |
+| **Use Case**    | Best suited for complex, large-scale applications with global state management needs.  | Suitable for applications that prefer a more React-centric state management using Context API. | Ideal for simpler applications or components that need to share state straightforwardly. | `Well-suited for React applications aiming to share and reuse hook logic across components, enhancing maintainability.` |
 
 ## Advanced Usages
 
