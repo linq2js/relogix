@@ -1,1 +1,1 @@
-# `PackageName`
+# `package-name`
