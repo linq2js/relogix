@@ -1,5 +1,5 @@
 import { PropsWithChildren, useState } from "react";
-import { screen, renderHook, act } from "@testing-library/react";
+import { screen, renderHook, act, waitFor } from "@testing-library/react";
 import { Provider, useLogic } from ".";
 
 const log = jest.fn();
@@ -36,8 +36,7 @@ const wrapper = (props: PropsWithChildren) => {
 
 const counterTest = () => renderHook(() => useLogic(CounterLogic), { wrapper });
 
-const actDelay = (ms = 0) =>
-  act(() => new Promise((resolve) => setTimeout(resolve, ms)));
+const actDelay = () => act(async () => {});
 
 beforeEach(() => {
   log.mockRestore();
