@@ -1,5 +1,5 @@
 import { PropsWithChildren, useState } from "react";
-import { screen, renderHook, act, waitFor } from "@testing-library/react";
+import { screen, renderHook, act } from "@testing-library/react";
 import { Provider, useLogic } from ".";
 
 const log = jest.fn();
