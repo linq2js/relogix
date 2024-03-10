@@ -33,7 +33,7 @@ const Root = () => (
   <Provider
     fallback={
       <div>
-        This fallback message will appear while the required hooks are loading
+        This fallback message will appear while the required logics are loading
       </div>
     }
   >
