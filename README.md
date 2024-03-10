@@ -246,6 +246,20 @@ To prevent unnecessary re-renders, callbacks returned from a logic hook are stab
 For example, with a counter logic:
 
 ```js
+const CounterLogic = () => {
+  const [count, setCount] = useState(0);
+
+  return {
+    count,
+    increment() {
+      setCount(count + 1);
+    },
+    showInfo() {
+      alert(count);
+    },
+  };
+};
+
 const Counter = () => {
   const { count, increment } = useLogic(CounterLogic);
 
@@ -258,7 +272,29 @@ const Counter = () => {
 };
 ```
 
-In this case, the increment callback is stable. Despite changes in the `count` value, ButtonComp will not re-render, as the `increment` function's reference does not change.
+In this scenario, it is common practice to utilize a memorized callback to enhance performance through the `useCallback` hook.
+
+```js
+const CounterLogic = () => {
+  const [count, setCount] = useState(0);
+  // We can access the previous state value, allowing the memorized callback to avoid directly referencing the count variable.
+  const increment = useCallback(() => setCount((prev) => prev + 1), [setCount]);
+  // However, the `showInfo` function will be recreated when the count variable changes.
+  const showInfo = useCallback(() => alert(count), [count]);
+  // Alternatively, we can create a ref for the count value and use it within the `showInfo` callback to prevent unnecessary recreations.
+  const countRef = useRef(count);
+  countRef.current = count;
+  const showInfo = useCallback(() => alert(countRef.current), []);
+
+  return {
+    count,
+    increment,
+    showInfo,
+  };
+};
+```
+
+With `relogix`, the `increment`, 'showInfo' callbacks are stable. Despite changes in the `count` value, ButtonComp will not re-render, as the `increment` function's reference does not change.
 
 These advanced features enable developers to write more efficient and performant React applications by leveraging lazy-loading and minimizing unnecessary re-renders.
 

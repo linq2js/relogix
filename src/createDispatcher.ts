@@ -2,11 +2,44 @@ import { Dispatcher, NO_RESULT } from "./internal";
 import { AnyFunc, Logic } from "./types";
 import { isPlainObject, isPromiseLike } from "./utils";
 
+const proxyCache = new WeakMap<any, any>();
+
+const createProxy = (value: any) => {
+  let proxy = proxyCache.get(value);
+  if (proxy) return proxy;
+  const callbackCache = new Map<any, { proxy: AnyFunc; origin: AnyFunc }>();
+
+  proxy = new Proxy(value, {
+    get(target, prop) {
+      const value = target[prop];
+      if (typeof value === "function") {
+        let cache = callbackCache.get(prop);
+        if (!cache) {
+          cache = {
+            proxy(...args) {
+              return cache?.origin(...args);
+            },
+            origin: value,
+          };
+          callbackCache.set(prop, cache);
+        } else {
+          cache.origin = value;
+        }
+        return cache.proxy;
+      }
+      return value;
+    },
+  });
+
+  proxyCache.set(value, proxy);
+
+  return proxy;
+};
+
 export const createDispatcher = (
   logic: Logic,
   onLogicChange: (logic: Logic, value: any) => void
 ): Dispatcher => {
-  const callbackCache = new Map<any, { proxy: AnyFunc; origin: AnyFunc }>();
   const originalLogic = logic;
   let prev: any = {};
   const wrapResult = (value: any) => {
@@ -41,27 +74,7 @@ export const createDispatcher = (
       }
     }
 
-    const proxy = new Proxy(value, {
-      get(target, prop) {
-        const value = target[prop];
-        if (typeof value === "function") {
-          let cache = callbackCache.get(prop);
-          if (!cache) {
-            cache = {
-              proxy(...args) {
-                return cache?.origin(...args);
-              },
-              origin: value,
-            };
-            callbackCache.set(prop, cache);
-          } else {
-            cache.origin = value;
-          }
-          return cache.proxy;
-        }
-        return value;
-      },
-    });
+    const proxy = createProxy(value);
 
     if (hasChange) {
       onLogicChange(originalLogic, proxy);
