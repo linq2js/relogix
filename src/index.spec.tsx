@@ -157,6 +157,40 @@ describe("advanced usages", () => {
     expect(result.current.count).toBe(2);
     expect(log).toHaveBeenCalledTimes(2);
   });
+
+  test("reset", async () => {
+    const { result, rerender } = renderHook(
+      () => {
+        const counter = useLogic(CounterLogic);
+        const { reset } = useLogic();
+        return {
+          ...counter,
+          reset,
+        };
+      },
+      { wrapper }
+    );
+    // Initially, the logic must be loaded asynchronously.
+    screen.getByText("loading");
+    await actDelay();
+    expect(result.current.count).toBe(0);
+    expect(log).toHaveBeenCalledTimes(1);
+    // Even if the component re-renders multiple times, the hook result remains consistent with the previous one.
+    rerender();
+    rerender();
+    rerender();
+    expect(log).toHaveBeenCalledTimes(1);
+    // When the component's state changes, the hook result should change accordingly.
+    act(() => result.current.increment());
+    await actDelay();
+    expect(result.current.count).toBe(1);
+    expect(log).toHaveBeenCalledTimes(2);
+    act(() => {
+      result.current.reset(CounterLogic);
+    });
+    await actDelay();
+    expect(result.current.count).toBe(0);
+  });
 });
 
 describe("useLogic", () => {

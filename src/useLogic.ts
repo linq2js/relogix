@@ -1,17 +1,35 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Loadable, Logic } from "./types";
+import { Loadable, Logic, LogicAPI } from "./types";
 import { useManager } from "./useManager";
 import { debounce, isPromiseLike } from "./utils";
 import { isLoadable, loadable } from "./loadable";
 
 export type Awaitable<T = any> = Logic<T> | Promise<T> | Loadable<T>;
 
+export type UseLogicFn = {
+  (): LogicAPI;
+
+  <const T extends Awaitable | readonly Awaitable[]>(logic: T): T extends Logic<
+    infer R
+  >
+    ? R
+    : {
+        [key in keyof T]: T[key] extends Logic<infer R>
+          ? R
+          : T[key] extends Promise<infer R>
+          ? R
+          : T[key] extends Loadable<any>
+          ? T[key]
+          : never;
+      };
+};
+
 /**
  * Retrieve the logic data and re-render it whenever the logic data changes.
  * @param logic
  * @returns
  */
-export const useLogic = <const T extends Awaitable | readonly Awaitable[]>(
+const useLogicInternal = <const T extends Awaitable | readonly Awaitable[]>(
   logic: T
 ): T extends Logic<infer R>
   ? R
@@ -87,4 +105,9 @@ export const useLogic = <const T extends Awaitable | readonly Awaitable[]>(
   }, [rerender, manager]);
 
   return isMultiple ? results : (results[0] as any);
+};
+
+export const useLogic: UseLogicFn = (...args: any[]): any => {
+  if (!args.length) return useManager();
+  return useLogicInternal(args[0]);
 };

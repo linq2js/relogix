@@ -3,14 +3,11 @@ import { useManager } from "./useManager";
 
 export const LogicContainer = memo(function LogicContainer() {
   const manager = useManager();
-  const dynamicLogic = manager.dynamicLogic;
+  const dynamicLogic = manager.lazyLogic;
   const mountedRef = useRef(false);
   const rerender = useState(() => {
-    let prevLength = dynamicLogic.length;
     manager.onLogicAdded(() => {
       if (!mountedRef.current) return;
-      if (prevLength === dynamicLogic.length) return;
-      prevLength = dynamicLogic.length;
       rerender({});
     });
     return {};

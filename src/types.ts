@@ -15,3 +15,9 @@ export interface Loadable<T> {
   readonly promise: Promise<T>;
   onDone(listener: (loadable: this) => void): VoidFunction;
 }
+
+export type LogicAPI = {
+  delete(logic: Logic | Logic[]): void;
+
+  reset(logic: Logic | Logic[]): void;
+};

@@ -1,10 +1,10 @@
 import { ReactNode, createContext } from "react";
-import { Logic } from "./types";
+import { Logic, LogicAPI } from "./types";
 
 export type Listener = (logic: Logic) => void;
 
-export type LogicManager = {
-  dynamicLogic: ReactNode[];
+export type LogicManager = LogicAPI & {
+  lazyLogic: ReactNode[];
   /**
    * return a logic wrapper function
    * @param logic
@@ -22,7 +22,7 @@ export type LogicManager = {
   onLogicAdded(handler: VoidFunction): void;
 };
 
-export type Dispatcher = { dispatch(): void; result(): any };
+export type Dispatcher = { dispatch(): void; result(): any; node?: ReactNode };
 
 export const NO_RESULT = {};
 export const RESOLVED_PROMISE = Promise.resolve();
