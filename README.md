@@ -117,6 +117,19 @@ export const Counter = () => {
 - Share hook results across components.
 - Simplify logic management in large React applications.
 
+### Compare to other state management libs
+
+Here's a comparison of Relogix with Redux and use-between, presented in a table format:
+
+| Feature/Aspect  | Redux                                                                                                           | use-between                                                                                             | Relogix                                                                                                          |
+| --------------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| **Complexity**  | High, with a comprehensive set of concepts like actions, reducers, and middleware.                              | Very low, with a focus on straightforward state sharing between components.                             | Low, simplifies React hook logic modularization and reuse.                                                       |
+| **Boilerplate** | High, requires significant setup and boilerplate code for actions, reducers, etc.                               | Very low, easy to set up with minimal configuration.                                                    | Low, minimal boilerplate by focusing on logic reuse without extensive setup.                                     |
+| **Performance** | Excellent for large applications, with optimizations for predictable state updates and middleware.              | Good for small to medium projects, with a simple model that can reduce over-rendering.                  | Optimized for re-rendering with features like stable callbacks and lazy loading of logic.                        |
+| **Use Case**    | Best suited for complex, large-scale applications where global state management and predictability are crucial. | Great for simpler applications or scenarios where components need to share state without complex logic. | Ideal for React applications looking to share and reuse hook logic across components, enhancing maintainability. |
+
+This table provides a concise overview, comparing the complexity, boilerplate requirements, performance optimizations, and ideal use cases of Redux, use-between, and Relogix, to help you choose the right tool for your project's specific needs.
+
 ## Advanced Usages
 
 Relogix offers advanced features for optimizing your React applications, including support for lazy-loaded logic and re-rendering optimizations.
