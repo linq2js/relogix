@@ -33,7 +33,7 @@ const Root = () => (
   <Provider
     fallback={
       <div>
-        This fallback will be shown when need hook logic starts fetching
+        This fallback message will appear while the required hooks are loading
       </div>
     }
   >
@@ -129,6 +129,39 @@ export const Counter = () => {
 ## Advanced Usages
 
 Relogix offers advanced features for optimizing your React applications, including support for lazy-loaded logic and re-rendering optimizations.
+
+### Preloading Logic
+
+Relogix enhances your application's performance by loading logic asynchronously by default. However, you can take control of the logic loading process, particularly to preload certain logic that your application needs immediately upon launch. This feature is especially useful for improving the initial render performance and user experience.
+
+#### How to Preload Logic
+
+To preload your logic with Relogix, you pass the logics you want to preload to the Provider component via the preload prop. This ensures that the specified logics are loaded and ready to use as soon as your application starts, reducing loading times and improving responsiveness.
+
+#### Example
+
+Consider you have two logic hooks, AuthLogic and UserDataLogic, that you want to preload:
+
+```js
+import { Provider } from "relogix";
+import AuthLogic from "./logic/AuthLogic";
+import UserDataLogic from "./logic/UserDataLogic";
+
+// In your App component or main entry file
+<Provider fallback={<div>Loading...</div>} preload={[AuthLogic, UserDataLogic]}>
+  <App />
+</Provider>;
+```
+
+In this setup, AuthLogic and UserDataLogic are preloaded when the application initializes, ensuring that these pieces of logic are immediately available for any component that needs them. No loading fallback display as usual.
+
+#### Benefits of Preloading Logic
+
+- **Improved Initial Load Performance**: By preloading critical logic, you can significantly reduce the initial loading time of your application.
+- **Enhanced User Experience**: Preloading logic minimizes the perceived waiting time for users, leading to a smoother and more responsive user experience.
+- **Strategic Resource Loading**: Gives you control over the loading strategy, allowing you to prioritize essential logic that needs to be available as soon as possible.
+
+Preloading logic with Relogix is a powerful feature for optimizing your React application's loading performance and user experience. By strategically preloading essential logic, you ensure that your application is responsive and ready to provide value to your users from the moment it loads.
 
 ### Lazy-loaded Logic
 
