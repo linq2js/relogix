@@ -258,7 +258,7 @@ const Counter = () => {
 };
 ```
 
-In this case, the increment callback is stable. Despite changes in the count value, ButtonComp will not re-render, as the increment function's reference does not change.
+In this case, the increment callback is stable. Despite changes in the `count` value, ButtonComp will not re-render, as the `increment` function's reference does not change.
 
 These advanced features enable developers to write more efficient and performant React applications by leveraging lazy-loading and minimizing unnecessary re-renders.
 

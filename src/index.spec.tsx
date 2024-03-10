@@ -1,6 +1,7 @@
 import { PropsWithChildren, useState } from "react";
 import { screen, renderHook, act } from "@testing-library/react";
 import { Provider, useLogic } from ".";
+import { loadable } from "./loadable";
 
 const log = jest.fn();
 
@@ -125,5 +126,23 @@ describe("advanced usages", () => {
     await actDelay();
     expect(result.current.count).toBe(2);
     expect(log).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("useLogic", () => {
+  test("loadable", async () => {
+    const l1 = loadable(Promise.resolve(1));
+    const { result } = renderHook(() => useLogic(l1), { wrapper });
+    expect(result.current.data).toBeUndefined();
+    await actDelay();
+    expect(result.current.data).toBe(1);
+  });
+
+  test("promise", async () => {
+    const p = Promise.resolve(1);
+    const { result } = renderHook(() => useLogic(p), { wrapper });
+    expect(result.current).toBeNull();
+    await actDelay();
+    expect(result.current).toBe(1);
   });
 });
