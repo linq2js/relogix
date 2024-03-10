@@ -49,7 +49,9 @@
     "@types/react": ">=16.8",
     "react": ">=16.8"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@wry/equality": "^0.5.7"
+  },
   "devDependencies": {
     "@rollup/plugin-strip": "^3.0.4",
     "@rollup/plugin-typescript": "^11.1.6",

@@ -64,5 +64,5 @@ export const loadable = <T>(promise: Promise<T>): Loadable<T> => {
 };
 
 export const isLoadable = <T>(value: any): value is Loadable<T> => {
-  return value && "promise" in value && typeof value.onDone === "function";
+  return value && value.promise && typeof value.onDone === "function";
 };

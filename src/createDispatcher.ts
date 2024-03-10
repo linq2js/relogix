@@ -100,18 +100,16 @@ export const createDispatcher = (
       promise = result.then(
         (value) => {
           promise = undefined;
-
-          if (typeof value === "function") {
-            logic = value as Logic;
-          } else if (typeof value.default !== "function") {
-            error = new Error("Lazy logic not valid");
-          } else {
-            logic = value.default as Logic;
-          }
+          logic =
+            typeof value === "function"
+              ? value
+              : value && typeof value.default === "function"
+              ? value.default
+              : () => value;
         },
         (reason) => {
-          error = reason;
           promise = undefined;
+          error = reason;
         }
       );
       throw promise;

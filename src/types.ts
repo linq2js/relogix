@@ -4,9 +4,9 @@ export type NoInfer<T> = [T][T extends any ? 0 : never];
 
 export type Equal<T = unknown> = (a: T, b: T) => boolean;
 
-export type Logic<T = any> = () =>
-  | T
-  | Promise<{ default: () => T } | (() => T)>;
+export type LogicResult<T> = T | Promise<{ default: Logic<T> } | Logic<T> | T>;
+
+export type Logic<T = any> = () => LogicResult<T>;
 
 export interface Loadable<T> {
   readonly data: T | undefined;

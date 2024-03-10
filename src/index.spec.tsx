@@ -2,6 +2,7 @@ import { PropsWithChildren, useState } from "react";
 import { screen, renderHook, act } from "@testing-library/react";
 import { Provider, useLogic } from ".";
 import { loadable } from "./loadable";
+import { withVariant } from "./withVariant";
 
 const log = jest.fn();
 
@@ -14,6 +15,19 @@ const CounterLogic = () => {
     count,
     increment() {
       setCount(count + 1);
+    },
+  };
+};
+
+const CounterLogicWithVariant = (step: number = 1) => {
+  log("CounterLogic");
+
+  const [count, setCount] = useState(0);
+
+  return {
+    count,
+    increment() {
+      setCount(count + step);
     },
   };
 };
@@ -105,6 +119,22 @@ describe("advanced usages", () => {
     expect(log).toHaveBeenCalledTimes(2);
   });
 
+  test("multiple level lazy logic", async () => {
+    const lazyValue = async () => () => Promise.resolve(() => ({ data: 1 }));
+    const { result } = renderHook(() => useLogic(lazyValue), { wrapper });
+    screen.getByText("loading");
+    await actDelay();
+    expect(result.current.data).toBe(1);
+  });
+
+  test("lazy value", async () => {
+    const lazyValue = async () => ({ data: 1 });
+    const { result } = renderHook(() => useLogic(lazyValue), { wrapper });
+    screen.getByText("loading");
+    await actDelay();
+    expect(result.current.data).toBe(1);
+  });
+
   test("dependency logic", async () => {
     const { result, rerender } = renderHook(
       () => useLogic(DoubledCounterLogic),
@@ -144,5 +174,57 @@ describe("useLogic", () => {
     expect(result.current).toBeNull();
     await actDelay();
     expect(result.current).toBe(1);
+  });
+});
+
+describe("withVariant", () => {
+  test("sync logic", async () => {
+    const t1 = renderHook(
+      () => useLogic(withVariant(CounterLogicWithVariant, 1)),
+      { wrapper }
+    );
+    screen.getByText("loading");
+    await actDelay();
+    expect(t1.result.current.count).toBe(0);
+    act(() => t1.result.current.increment());
+    await actDelay();
+    expect(t1.result.current.count).toBe(1);
+
+    const t2 = renderHook(
+      () => useLogic(withVariant(CounterLogicWithVariant, 2)),
+      { wrapper }
+    );
+    screen.getByText("loading");
+    await actDelay();
+    expect(t2.result.current.count).toBe(0);
+    act(() => t2.result.current.increment());
+    await actDelay();
+    expect(t2.result.current.count).toBe(2);
+  });
+
+  test("async logic", async () => {
+    const AsyncCounterLogicWithVariant = () =>
+      Promise.resolve(CounterLogicWithVariant);
+    const t1 = renderHook(
+      () => useLogic(withVariant(AsyncCounterLogicWithVariant, 1)),
+      { wrapper }
+    );
+    screen.getByText("loading");
+    await actDelay();
+    expect(t1.result.current.count).toBe(0);
+    act(() => t1.result.current.increment());
+    await actDelay();
+    expect(t1.result.current.count).toBe(1);
+
+    const t2 = renderHook(
+      () => useLogic(withVariant(AsyncCounterLogicWithVariant, 2)),
+      { wrapper }
+    );
+    screen.getByText("loading");
+    await actDelay();
+    expect(t2.result.current.count).toBe(0);
+    act(() => t2.result.current.increment());
+    await actDelay();
+    expect(t2.result.current.count).toBe(2);
   });
 });
