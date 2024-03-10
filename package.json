@@ -12,7 +12,14 @@
     "url": "https://github.com/linq2js/relogix/issues"
   },
   "homepage": "https://github.com/linq2js/relogix/",
-  "keywords": [],
+  "keywords": [
+    "react",
+    "functional",
+    "state",
+    "management",
+    "hook",
+    "async"
+  ],
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
