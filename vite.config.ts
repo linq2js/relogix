@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import { mkdirSync, existsSync, writeFileSync } from "fs";
 
 import typescript from "@rollup/plugin-typescript";
+import strip from "@rollup/plugin-strip";
 import path from "path";
 import { typescriptPaths } from "rollup-plugin-typescript-paths";
 import packageJson from "./package.json";
@@ -67,6 +68,7 @@ export default defineConfig({
     rollupOptions: {
       external: ["react", "react-dom", "@wry/equality"],
       plugins: [
+        strip(),
         typescriptPaths({
           preserveExtensions: true,
         }),

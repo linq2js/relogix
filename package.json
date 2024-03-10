@@ -1,17 +1,17 @@
 {
-  "name": "package-name",
+  "name": "relogix",
   "type": "module",
   "version": "0.8.0",
   "author": "linqtojs@gmail.com",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/linq2js/package-name"
+    "url": "git+https://github.com/linq2js/relogix"
   },
   "bugs": {
-    "url": "https://github.com/linq2js/package-name/issues"
+    "url": "https://github.com/linq2js/relogix/issues"
   },
-  "homepage": "https://github.com/linq2js/package-name/",
+  "homepage": "https://github.com/linq2js/relogix/",
   "keywords": [],
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -44,6 +44,7 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "@rollup/plugin-strip": "^3.0.4",
     "@rollup/plugin-typescript": "^11.1.6",
     "@swc/core": "1.3.100",
     "@swc/jest": "0.2.29",
@@ -54,11 +55,11 @@
     "jest-environment-jsdom": "29.7.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "rimraf": "5.0.5",
     "rollup-plugin-typescript-paths": "^1.5.0",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2",
-    "vite": "^5.0.8",
-    "rimraf": "5.0.5"
+    "vite": "^5.0.8"
   },
   "publishConfig": {
     "access": "public"
