@@ -51,7 +51,8 @@ const wrapper = (props: PropsWithChildren) => {
 
 const counterTest = () => renderHook(() => useLogic(CounterLogic), { wrapper });
 
-const actDelay = () => act(async () => {});
+const actDelay = (ms: number = 0) =>
+  act(() => new Promise((resolve) => setTimeout(resolve, ms)));
 
 beforeEach(() => {
   log.mockRestore();

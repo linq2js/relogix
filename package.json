@@ -18,7 +18,8 @@
     "state",
     "management",
     "hook",
-    "async"
+    "async",
+    "logic"
   ],
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",

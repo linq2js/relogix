@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Loadable, Logic, LogicAPI } from "./types";
 import { useManager } from "./useManager";
 import { debounce, isPromiseLike } from "./utils";
@@ -6,9 +6,7 @@ import { isLoadable, loadable } from "./loadable";
 
 export type Awaitable<T = any> = Logic<T> | Promise<T> | Loadable<T>;
 
-export type UseLogicFn = {
-  (): LogicAPI;
-
+export type UseFn = {
   <const T extends Awaitable | readonly Awaitable[]>(logic: T): T extends Logic<
     infer R
   >
@@ -24,90 +22,90 @@ export type UseLogicFn = {
       };
 };
 
+export type UseLogicFn = UseFn & {
+  (): LogicAPI & { use: UseFn };
+};
+
 /**
  * Retrieve the logic data and re-render it whenever the logic data changes.
  * @param logic
  * @returns
  */
-const useLogicInternal = <const T extends Awaitable | readonly Awaitable[]>(
-  logic: T
-): T extends Logic<infer R>
-  ? R
-  : {
-      [key in keyof T]: T[key] extends Logic<infer R>
-        ? R
-        : T[key] extends Promise<infer R>
-        ? R
-        : T[key] extends Loadable<any>
-        ? T[key]
-        : never;
-    } => {
+export const useLogic: UseLogicFn = (...args: any[]): any => {
   const manager = useManager();
   const rerender = useState({})[1];
-  const isMultiple = Array.isArray(logic);
-  const logicList: Logic[] = isMultiple ? logic : [logic];
-  const results: unknown[] = [];
+  const { allLogic, unsubscribeAll, update } = useState(() => ({
+    allLogic: new Set<Logic>(),
+    unsubscribeAll: new Set<VoidFunction>(),
+    update: debounce(() => rerender({})),
+  }))[0];
+
   const promises: Promise<unknown>[] = [];
-  const update = useMemo(() => debounce(() => rerender({})), [rerender]);
-  const unsubscribeRef = useRef(new Set<VoidFunction>());
+  const api = useMemo(() => {
+    return {
+      reset: manager.reset,
+      delete: manager.delete,
+      use(logic: Logic | Logic[]) {
+        const isMultiple = Array.isArray(logic);
+        const results: unknown[] = [];
+        (isMultiple ? logic : [logic]).forEach((x) => {
+          if (isPromiseLike(x)) {
+            const l = loadable(x);
+            if (l.loading) {
+              promises.push(x);
+            } else {
+              if (l.error) throw l.error;
+              results.push(l.data);
+            }
+            return;
+          }
 
-  unsubscribeRef.current.forEach((x) => x());
-  unsubscribeRef.current.clear();
+          if (isLoadable(x)) {
+            if (x.loading) {
+              unsubscribeAll.add(x.onDone(update));
+            }
+            results.push(x);
+            return;
+          }
 
-  logicList.forEach((x) => {
-    if (isPromiseLike(x)) {
-      const l = loadable(x);
-      if (l.loading) {
-        promises.push(x);
-      } else {
-        if (l.error) throw l.error;
-        results.push(l.data);
-      }
-      return;
-    }
+          try {
+            allLogic.add(x);
+            results.push(manager.getResult(x));
+          } catch (ex) {
+            if (isPromiseLike(ex)) {
+              promises.push(ex);
+            } else {
+              throw ex;
+            }
+          }
+        });
 
-    if (isLoadable(x)) {
-      if (x.loading) {
-        unsubscribeRef.current.add(x.onDone(update));
-      }
-      results.push(x);
-      return;
-    }
+        if (promises.length) {
+          throw Promise.all(promises);
+        }
 
-    try {
-      results.push(manager.getResult(x));
-    } catch (ex) {
-      if (isPromiseLike(ex)) {
-        promises.push(ex);
-      } else {
-        throw ex;
-      }
-    }
-  });
+        return isMultiple ? results : (results[0] as any);
+      },
+    };
+  }, [manager]);
 
-  if (promises.length) {
-    throw Promise.all(promises);
-  }
+  allLogic.clear();
+  unsubscribeAll.forEach((x) => x());
+  unsubscribeAll.clear();
 
-  const logicRef = useRef(logicList);
-  logicRef.current = logicList;
+  const result = args.length ? api.use(args[0]) : api;
 
   useEffect(() => {
     const unsubscribeLogicChange = manager.subscribe((logic) => {
-      if (!logicRef.current.includes(logic)) return;
+      if (!allLogic.has(logic)) return;
       update();
     });
 
     return () => {
       unsubscribeLogicChange();
-      unsubscribeRef.current.forEach((x) => x());
+      unsubscribeAll.forEach((x) => x());
     };
-  }, [rerender, manager]);
+  }, [rerender, manager, allLogic]);
 
-  return isMultiple ? results : (results[0] as any);
-};
-
-export const useLogic: UseLogicFn = (...args: any[]): any => {
-  if (!args.length) return useManager();
-  return useLogicInternal(args[0]);
+  return result;
 };
