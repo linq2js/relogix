@@ -143,7 +143,7 @@ export const createManager = (
     },
     getDispatcher: getDispatcher,
     lazyLogic,
-    onLogicAdded(handler) {
+    onLogicChanged(handler) {
       onLogicUpdated = handler;
     },
   };

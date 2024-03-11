@@ -1,15 +1,14 @@
 import { memo, useLayoutEffect, useRef, useState } from "react";
 import { useManager } from "./useManager";
+import { debounce } from "./utils";
 
 export const LogicContainer = memo(function LogicContainer() {
   const manager = useManager();
-  const dynamicLogic = manager.lazyLogic;
+  const lazyLogic = manager.lazyLogic;
   const mountedRef = useRef(false);
   const rerender = useState(() => {
-    manager.onLogicAdded(() => {
-      if (!mountedRef.current) return;
-      rerender({});
-    });
+    const update = debounce(() => rerender({}));
+    manager.onLogicChanged(update);
     return {};
   })[1];
 
@@ -17,5 +16,5 @@ export const LogicContainer = memo(function LogicContainer() {
     mountedRef.current = true;
   });
 
-  return dynamicLogic;
+  return lazyLogic;
 });

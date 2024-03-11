@@ -19,7 +19,7 @@ export type LogicManager = LogicAPI & {
    */
   subscribe(listener: Listener): VoidFunction;
 
-  onLogicAdded(handler: VoidFunction): void;
+  onLogicChanged(handler: VoidFunction): void;
 };
 
 export type Dispatcher = { dispatch(): void; result(): any; node?: ReactNode };

@@ -2,7 +2,7 @@ import { PropsWithChildren, useState } from "react";
 import { screen, renderHook, act } from "@testing-library/react";
 import { Provider, useLogic } from ".";
 import { loadable } from "./loadable";
-import { withVariant } from "./withVariant";
+import { variant } from "./variant";
 
 const log = jest.fn();
 
@@ -213,10 +213,9 @@ describe("useLogic", () => {
 
 describe("withVariant", () => {
   test("sync logic", async () => {
-    const t1 = renderHook(
-      () => useLogic(withVariant(CounterLogicWithVariant, 1)),
-      { wrapper }
-    );
+    const t1 = renderHook(() => useLogic(variant(CounterLogicWithVariant, 1)), {
+      wrapper,
+    });
     screen.getByText("loading");
     await actDelay();
     expect(t1.result.current.count).toBe(0);
@@ -224,10 +223,9 @@ describe("withVariant", () => {
     await actDelay();
     expect(t1.result.current.count).toBe(1);
 
-    const t2 = renderHook(
-      () => useLogic(withVariant(CounterLogicWithVariant, 2)),
-      { wrapper }
-    );
+    const t2 = renderHook(() => useLogic(variant(CounterLogicWithVariant, 2)), {
+      wrapper,
+    });
     screen.getByText("loading");
     await actDelay();
     expect(t2.result.current.count).toBe(0);
@@ -240,7 +238,7 @@ describe("withVariant", () => {
     const AsyncCounterLogicWithVariant = () =>
       Promise.resolve(CounterLogicWithVariant);
     const t1 = renderHook(
-      () => useLogic(withVariant(AsyncCounterLogicWithVariant, 1)),
+      () => useLogic(variant(AsyncCounterLogicWithVariant, 1)),
       { wrapper }
     );
     screen.getByText("loading");
@@ -251,7 +249,7 @@ describe("withVariant", () => {
     expect(t1.result.current.count).toBe(1);
 
     const t2 = renderHook(
-      () => useLogic(withVariant(AsyncCounterLogicWithVariant, 2)),
+      () => useLogic(variant(AsyncCounterLogicWithVariant, 2)),
       { wrapper }
     );
     screen.getByText("loading");
